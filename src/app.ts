@@ -18,8 +18,13 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:8080","https://gitpusher-dashboard.vercel.app/"], // your frontend URL
-    credentials: true, // allow cookies or auth headers
+    origin: [
+      "http://localhost:8080",
+      "https://gitpusher-dashboard.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 app.use(helmet());
