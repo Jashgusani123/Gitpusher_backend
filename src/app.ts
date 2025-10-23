@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:8080", // your frontend URL
+    origin: ["http://localhost:8080","https://gitpusher-dashboard.vercel.app/"], // your frontend URL
     credentials: true, // allow cookies or auth headers
   })
 );
