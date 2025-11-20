@@ -28,11 +28,11 @@ export const createUser = async (req: Request, res: Response) => {
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
 
-        return res.status(201).json({ success: true, user });
+        return res.status(201).json({ success: true, data: user, message: "Account Created !!" });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
-}; 
+};
 
 export const loginUser = async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -53,32 +53,31 @@ export const loginUser = async (req: Request, res: Response) => {
         // Generate JWT token
         const token = generateToken(user._id);
 
-        // Set cookie
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
+            secure: process.env.NODE_ENV === "production" ? true : false,
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 24 * 60 * 60 * 1000
         });
 
-        return res.status(200).json({ success: true, user });
+        return res.status(200).json({ success: true, data: user, message: "Logged In Successfully !!" });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
 
 export const getUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const userId = req.user?.id;
-  if (!userId) {
-    res.status(404).json({ success: false, message: "User not found" });
-    return;
-  }
-  const user = await User.findById(userId);
-  if (!user) {
-    res.status(404).json({ success: false, message: "User not found" });
-    return;
-  }
-  res.status(200).json({ success: true, user });
+    const userId = req.user?.id;
+    if (!userId) {
+        res.status(404).json({ success: false, message: "User not found" });
+        return;
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+        res.status(404).json({ success: false, message: "User not found" });
+        return;
+    }
+    res.status(200).json({ success: true, data: user });
 };
 
 export const logoutUser = (req: AuthenticatedRequest, res: Response) => {
@@ -88,7 +87,8 @@ export const logoutUser = (req: AuthenticatedRequest, res: Response) => {
     res.clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
+
     res.status(200).json({ success: true, message: "Logged out successfully" });
 };

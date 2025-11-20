@@ -31,7 +31,7 @@ export const createApiKey = async (req: AuthenticatedRequest, res: Response) => 
         await user.save();
 
         // Return only the random key to the frontend (for CLI)
-        return res.status(201).json({ success: true, randomAPIkey, limit: newAPIKey.limit });
+        return res.status(201).json({ success: true, randomAPIkey, limit: newAPIKey.limit ,_id:newAPIKey._id });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Server error" });
     }
@@ -47,7 +47,6 @@ export const verifyHashedKeyGetApiKey = async (req: Request, res: Response) => {
 
   if (!randomAPIkey)
     return res.status(400).json({ success: false, message: "Random API key is required" });
-  console.log(clientIp);
   
   try {
     const allKeys = await ApiKey.find();
